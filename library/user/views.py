@@ -28,7 +28,7 @@ class UserAPIView(APIView):
         if serializer.is_valid():
             user=serializer.save()
             user.set_password(request.data['password'])
-            # user.save()
+            user.save()
             response_serializer=UserSerializator(user)
             return Response(response_serializer.data,status=status.status.HTTP_200_OK)   
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)     
