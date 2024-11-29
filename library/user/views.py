@@ -11,8 +11,8 @@ from django.shortcuts import get_object_or_404
 class UserAPIView(APIView):
     def get(self, request, id=None):
         if id:
-            # user=get_object_or_404(User,pk=id)
-            user = CustomUser.objects.filter(pk=id,is_active=True).first()
+            # user=get_object_or_404(CustomUser,pk=id)
+            user = CustomUser.objects.filter(pk=id, is_active=True).first()
             if user:
                 serialized_user = UserSerializator(user)
                 return Response(serialized_user.data, status=status.HTTP_200_OK)
@@ -43,14 +43,33 @@ class UserAPIView(APIView):
         if id:
             user = get_object_or_404(CustomUser, pk=id)
             if user:
-                user.is_active=False
+                user.is_active = False
                 user.save()
                 return Response(
                     {"success": "User was successfuly deleted"},
-                    status=status.HTTP_204_NO_CONTENT
+                    status=status.HTTP_204_NO_CONTENT,
                 )
             return Response(
                 {"error": "Users not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        return Response({'error':'id is required to delete user'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        return Response(
+            {"error": "id is required to delete user"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def put(self, request, id=None):
+        if id:
+            user = get_object_or_404(CustomUser, pk=id)
+            if user:
+                serializer = UserSerializator(user, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    user.save()
+                    return Response(
+                        {"success": "User updated successfuly"}, status=status.HTTP_200_OK
+                    )
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
