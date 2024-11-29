@@ -36,7 +36,7 @@ class UserAPIView(APIView):
             user.set_password(request.data["password"])
             user.save()
             response_serializer = UserSerializator(user)
-            return Response(response_serializer.data, status=status.status.HTTP_200_OK)
+            return Response(response_serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id=None):
@@ -64,7 +64,6 @@ class UserAPIView(APIView):
                 serializer = UserSerializator(user, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
-                    user.save()
                     return Response(
                         {"success": "User updated successfuly"}, status=status.HTTP_200_OK
                     )
