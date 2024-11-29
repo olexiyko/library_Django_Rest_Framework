@@ -45,12 +45,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                  user email, user password, user updated_at, user created_at,
                  user role, user is_active
         """
-        return f"'id': {self.id}, 'first_name': '{self.first_name}', 'middle_name': '{self.middle_name}', 'last_name': '{self.last_name}', 'email': '{self.email}', 'created_at': {int(self.created_at.timestamp())}, 'updated_at': {int(self.updated_at.timestamp())}, 'role': {self.role}, 'is_active': {self.is_active}"  # 'password': '{self.password}', \
+        return f"'id': {self.id}, 'first_name': '{self.first_name}', 'middle_name': '{self.middle_name}', 'last_name': '{self.last_name}', 'email': '{self.email}', 'created_at': {int(self.created_at.timestamp())}, 'last_login': {int(self.last_login.timestamp())}, 'role': {self.role}, 'is_active': {self.is_active}"  # 'password': '{self.password}', \
 
     # def create(self,first_name,last_name,middle_name,email,password,role,is_active,is_superuser):
     #     if len(first_name) <= 20 and len(middle_name) <= 20 and len(last_name) <= 20 and len(email) <= 100 and len(
-    #             email.split('@')) == 2 and len(User.objects.filter(email=email)) == 0:
-    #         user = User(email=email, password=password, first_name=first_name, middle_name=middle_name,
+    #             email.split('@')) == 2 and len(CustomUser.objects.filter(email=email)) == 0:
+    #         user = CustomUser(email=email, password=password, first_name=first_name, middle_name=middle_name,
     #                                  last_name=last_name,role=role,is_active=is_active,is_superuser=is_superuser)
     #         user.save()
     #         return user
