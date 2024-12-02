@@ -34,7 +34,7 @@ class BookApiView(APIView):
     def post(self, request):
         serializer = BookSerializator(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()    
             return Response(
                 {"success": "Book created succesfully"}, status=status.HTTP_201_CREATED
             )

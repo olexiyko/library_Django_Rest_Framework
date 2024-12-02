@@ -5,15 +5,27 @@ from author.models import Author
 
 
 class BookSerializator(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(queryset=Author.objects.all(),required=False)
+    authors = AuthorSerializator(many=True, read_only=True) 
+    author_ids = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True, required=False
+    ) 
     class Meta:
-        model=Book
-        fields=['title','description','count','author']
+        model = Book
+        fields = ['id', 'title', 'description', 'count', 'authors', 'author_ids']
 
-    # title = serializers.CharField(max_length=128, required=False)
-    # description = serializers.CharField(max_length=128, required=False)
-    # count = serializers.IntegerField(default=10, required=False)
-    # author = serializers.PrimaryKeyRelatedField(
-    #     queryset=Author.objects.all(),
-    #     required=False
-    # )    
+    def create(self, validated_data):
+        author_ids = validated_data.pop('author_ids', [])
+        book = Book.objects.create(**validated_data)
+
+        if author_ids:
+            existing_authors = Author.objects.filter(id__in=author_ids)
+            existing_author_ids = existing_authors.values_list('id', flat=True)
+
+            new_author_ids = set(author_ids) - set(existing_author_ids)
+            for author_id in new_author_ids:
+                Author.objects.create(id=author_id, name="Default Name", surname="Default Surname")
+
+            authors = Author.objects.filter(id__in=author_ids)
+            book.authors.set(authors)
+
+        return book
