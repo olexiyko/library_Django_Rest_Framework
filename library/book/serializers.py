@@ -29,3 +29,13 @@ class BookSerializator(serializers.ModelSerializer):
             book.authors.set(authors)
 
         return book
+
+    def update(self,instance,validated_data):
+        author_ids = validated_data.pop('author_ids', [])
+        if author_ids:
+            authors = Author.objects.filter(id__in=author_ids)
+            instance.authors.set(authors)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()  
+        return instance
