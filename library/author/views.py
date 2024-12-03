@@ -50,7 +50,7 @@ class AuthorApiView(APIView):
                     return Response(
                         {
                             "updated_author": deserializer.data,
-                            "data_to_update": request.data,
+                            "data_to_update": serializer.validated_data,
                             "status": "success",
                         }
                     )
