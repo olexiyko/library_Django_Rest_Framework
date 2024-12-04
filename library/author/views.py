@@ -12,7 +12,7 @@ from rest_framework.response import Response
 class AuthorApiView(APIView):
     def get(self, request, id=None):
         if id:
-            author = get_object_or_404(Author, pk=id)
+            author = get_object_or_404(Author, pk=id,is_active=True)
             if author:
                 serializer = AuthorSerializator(author)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -20,7 +20,7 @@ class AuthorApiView(APIView):
                 {"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
-            authors = Author.objects.all()
+            authors = Author.objects.filter(is_active=True).order_by('id').all()
             if authors:
                 serializer = AuthorSerializator(authors, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -55,6 +55,25 @@ class AuthorApiView(APIView):
                         }
                     )
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(
+            {"error": "Id is required to update author"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, request, id=None):
+        if id:
+            author = Author.objects.filter(pk=id, is_active=True).first()
+            if author:
+                author.is_active = False
+                author.save()
+                serializer = AuthorSerializator(author)
+                return Response(
+                    {"deleted_author": serializer.data, "status": "success"},
+                    status=status.HTTP_200_OK,
+                )
             return Response(
                 {"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND
             )

@@ -20,7 +20,7 @@ class UserAPIView(APIView):
                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
-            users = CustomUser.objects.filter(is_active=True).all()
+            users = CustomUser.objects.filter(is_active=True).order_by('id').all()
             if users:
                 serialized_users = UserSerializator(users, many=True)
                 return Response(serialized_users.data, status=status.HTTP_200_OK)
