@@ -30,13 +30,8 @@ class OrderApiView(APIView):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             order = serializer.save()
-            # return Response(
-            #     {"status": "succes", "new_order": serializer.data},
-            #     status=status.HTTP_201_CREATED,
-            # )
-            deserializer=OrderSerializer(order)
             return Response(
-                {"status": "succes", "new_order": deserializer.data},
+                {"status": "succes", "new_order": serializer.data},
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
